@@ -1,8 +1,10 @@
 package com.example.app__2022_10_04;
 
+import com.example.app__2022_10_04.jwt.JwtProvider;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -13,6 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class JwtTests {
+
+    @Autowired
+    private JwtProvider jwtProvider;
 
     @Value("${custom.jwt.secretKey}")
     private String secretKeyPlain;
@@ -34,5 +39,14 @@ public class JwtTests {
 
         assertThat(secretKey).isNotNull();
     }
+
+    @Test
+    @DisplayName("JwtProvider 객체로 시크릿키 객체를 생설할 수 있다.")
+    void t3() {
+        SecretKey secretKey = jwtProvider.getSecretKey();
+
+        assertThat(secretKey).isNotNull();
+    }
+
 
 }
