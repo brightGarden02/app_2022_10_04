@@ -13,6 +13,7 @@ import javax.crypto.SecretKey;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,6 +85,34 @@ public class JwtTests {
         System.out.println("accessToken = " + accessToken);
 
         assertThat(accessToken).isNotNull();
+    }
+
+
+
+    @Test
+    @DisplayName("accessToken을 통해서 claims 얻기")
+    void t6() {
+
+        //회원번호1
+        //username: admin
+        //ADMIN 역할, MEMBER 역할을 동시에 가지고 있는 회원정보 구성
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("id", 1L);
+        claims.put("username", "admin");
+        claims.put("authorities", Arrays.asList(
+                new SimpleGrantedAuthority("ADMIN"),
+                new SimpleGrantedAuthority("MEMBER")
+        ));
+
+        //지금부터 5시간 유효기간 가지는 토큰 생성
+        String accessToken = jwtProvider.generateAccessToken(claims, 60 * 60 * 5);
+
+        System.out.println("accessToken = " + accessToken);
+
+        assertThat(jwtProvider.verify(accessToken)).isTrue();
+
+        Map<String, Object> claimsFromToken = jwtProvider.getClaims(accessToken);
+        System.out.println("claimsFromToken = " + claimsFromToken);
     }
 
 }
