@@ -10,12 +10,20 @@ import java.util.Base64;
 @Component
 public class JwtProvider {
 
+    private SecretKey cachedSecretKey;
+
     @Value("${custom.jwt.secretKey}")
     private String secretKeyPlain;
 
-    public SecretKey getSecretKey() {
+    private SecretKey __getSecretKey() {
         String keyBase64Encoded = Base64.getEncoder().encodeToString(secretKeyPlain.getBytes());
         return Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
+    }
+
+    public SecretKey getSecretKey() {
+        if(cachedSecretKey == null) cachedSecretKey = __getSecretKey();
+
+        return cachedSecretKey;
     }
 
 }
